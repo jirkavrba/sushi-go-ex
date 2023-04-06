@@ -19,7 +19,6 @@ defmodule SushiGo.GameCode do
     }
   end
 
-
   @spec generate_code() :: String.t()
   defp generate_code() do
     MnemonicSlugs.generate_slug(3)
@@ -27,10 +26,11 @@ defmodule SushiGo.GameCode do
 
   @spec generate_game_id(String.t()) :: String.t()
   defp generate_game_id(game_code) when is_binary(game_code) do
-    hash = game_code
-    |> :erlang.phash2()
-    |> :erlang.integer_to_binary()
-    |> String.downcase()
+    hash =
+      game_code
+      |> :erlang.phash2()
+      |> :erlang.integer_to_binary()
+      |> String.downcase()
 
     "game:#{hash}"
   end

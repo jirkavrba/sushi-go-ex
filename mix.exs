@@ -45,6 +45,7 @@ defmodule SushiGo.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
+      {:elixir_uuid, "~> 1.2"},
       {:mnemonic_slugs, "~> 0.0.3"}
     ]
   end
