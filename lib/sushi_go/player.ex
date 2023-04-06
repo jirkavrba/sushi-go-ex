@@ -1,13 +1,16 @@
 defmodule SushiGo.Player do
+
+  alias SushiGo.Cards
+
   defmodule State do
     @moduledoc """
     A simple struct representing state for every player within the game round
     """
 
     @type t :: %__MODULE__{
-      collected_cards: list(card()),
-      available_cards: list(card()),
-      picked_cards: list(card()),
+      collected_cards: list(Cards.card()),
+      available_cards: list(Cards.card()),
+      picked_cards: list(Cards.card()),
       finished_picking: boolean,
       puddings: integer,
     }
