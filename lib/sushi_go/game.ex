@@ -22,7 +22,7 @@ defmodule SushiGo.Game do
   end
 
   @spec add_player(t(), Player.t()) :: t()
-  def add_player(%Game{} = game, %Player{} = player) do
-    %Game{game | players: game.players ++ [player]}
+  def add_player(%__MODULE__{} = game, %Player{} = player) do
+    %__MODULE__{game | players: game.players ++ [player]}
   end
 end
