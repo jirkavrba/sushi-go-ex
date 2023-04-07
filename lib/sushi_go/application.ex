@@ -12,6 +12,8 @@ defmodule SushiGo.Application do
       SushiGoWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: SushiGo.PubSub},
+      # Start a key-value storage for linking games
+      {Registry, keys: :unique, name: SushiGo.GameRegistry},
       # Start the Endpoint (http/https)
       SushiGoWeb.Endpoint
       # Start a worker by calling: SushiGo.Worker.start_link(arg)
