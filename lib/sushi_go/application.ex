@@ -14,10 +14,10 @@ defmodule SushiGo.Application do
       {Phoenix.PubSub, name: SushiGo.PubSub},
       # Start a key-value storage for linking games
       {Registry, keys: :unique, name: SushiGo.GameRegistry},
+      # Start the dynamic supervisor that's managing game servers
+      SushiGo.GameSupervisor,
       # Start the Endpoint (http/https)
       SushiGoWeb.Endpoint
-      # Start a worker by calling: SushiGo.Worker.start_link(arg)
-      # {SushiGo.Worker, arg}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
