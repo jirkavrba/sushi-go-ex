@@ -17,10 +17,10 @@ defmodule SushiGo.Game do
 
   defstruct [:code, :players, :round]
 
-  @spec new() :: t()
-  def new() do
+  @spec new(GameCode.t()) :: t()
+  def new(%GameCode{} = code) do
     %__MODULE__{
-      code: GameCode.new(),
+      code: code,
       players: [],
       round: 0
     }
