@@ -1,4 +1,9 @@
 defmodule SushiGo.Game do
+  @moduledoc """
+  A module representing the state of a single game.
+  This struct is used in game servers to keep track of the game state and perform player actions.
+  """
+
   alias SushiGo.GameCode
   alias SushiGo.Player
 

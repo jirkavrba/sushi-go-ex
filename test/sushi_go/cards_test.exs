@@ -1,4 +1,6 @@
 defmodule SushiGo.CardsTest do
+  @moduledoc false
+
   use ExUnit.Case, async: true
   alias SushiGo.Cards
 
@@ -20,7 +22,7 @@ defmodule SushiGo.CardsTest do
     deck = Cards.create_game_deck(100)
 
     assert length(deck) == 98
-    assert length(Enum.filter(deck, &(&1 == :pudding))) == 0
+    assert Enum.empty?(deck, &(&1 == :pudding))
   end
 
   test "scoring includes maki points" do

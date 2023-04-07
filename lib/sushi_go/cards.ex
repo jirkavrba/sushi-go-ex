@@ -1,4 +1,8 @@
 defmodule SushiGo.Cards do
+  @moduledoc """
+  A module for working with in-game cards and score evaluation.
+  """
+
   @type card ::
           :egg_nigiri
           | :salmon_nigiri
@@ -38,7 +42,12 @@ defmodule SushiGo.Cards do
   @spec count_maki(list(card())) :: integer()
   def(count_maki(cards) when is_list(cards)) do
     cards
-    |> Enum.map(fn :one_maki -> 1; :two_maki -> 2; :three_maki -> 3; _ -> 0 end)
+    |> Enum.map(fn
+      :one_maki -> 1
+      :two_maki -> 2
+      :three_maki -> 3
+      _ -> 0
+    end)
     |> Enum.sum()
   end
 
@@ -74,14 +83,17 @@ defmodule SushiGo.Cards do
   @spec score_nigiri(list(card())) :: integer()
   defp score_nigiri(cards) when is_list(cards) do
     cards
-    |> Enum.map(fn :wasabi -> :wasabi; :egg_nigiri -> 1; :salmon_nigiri -> 2; :squid_nigiri -> 3; _ -> nil end)
+    |> Enum.map(fn
+      :wasabi -> :wasabi
+      :egg_nigiri -> 1
+      :salmon_nigiri -> 2
+      :squid_nigiri -> 3
+      _ -> nil
+    end)
     |> Enum.reject(&is_nil/1)
     |> Enum.reduce({1, 0}, fn card, {wasabi_multiplier, points} ->
-      if (card == :wasabi),
-        do: {3, points},
-        else: {1, points + card * wasabi_multiplier}
+      if card == :wasabi, do: {3, points}, else: {1, points + card * wasabi_multiplier}
     end)
     |> then(fn {_, points} -> points end)
   end
-
 end

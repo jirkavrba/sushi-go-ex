@@ -46,7 +46,8 @@ defmodule SushiGo.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:elixir_uuid, "~> 1.2"},
-      {:mnemonic_slugs, "~> 0.0.3"}
+      {:mnemonic_slugs, "~> 0.0.3"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
 

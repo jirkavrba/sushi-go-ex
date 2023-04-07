@@ -1,4 +1,9 @@
 defmodule SushiGo.GameCode do
+  @moduledoc """
+  A module representing code that can be used to join games.
+  A game ID can be derived from the game code by hashing it's mnemonic words into a single number.
+  """
+
   @type t :: %__MODULE__{
           game_code: String.t(),
           game_id: String.t()

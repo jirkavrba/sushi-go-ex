@@ -1,4 +1,8 @@
 defmodule SushiGo.Player do
+  @moduledoc """
+  Module representing a player that's playing the game.
+  """
+
   alias SushiGo.Cards
 
   @type t :: %__MODULE__{
