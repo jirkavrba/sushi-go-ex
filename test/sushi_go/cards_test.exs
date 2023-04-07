@@ -22,7 +22,9 @@ defmodule SushiGo.CardsTest do
     deck = Cards.create_game_deck(100)
 
     assert length(deck) == 98
-    assert Enum.empty?(deck, &(&1 == :pudding))
+    assert deck
+          |> Enum.filter(&(&1 == :pudding))
+          |> Enum.empty?()
   end
 
   test "scoring includes maki points" do
