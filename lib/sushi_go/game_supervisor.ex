@@ -3,6 +3,7 @@ defmodule SushiGo.GameSupervisor do
   A module for dynamically staring and stopping supervised game servers.
   """
   alias SushiGo.GameCode
+  alias SushiGo.GameServer
 
   use DynamicSupervisor
 
@@ -32,7 +33,7 @@ defmodule SushiGo.GameSupervisor do
 
   @spec stop_game(String.t()) :: :ok
   def stop_game(game_id) when is_binary(game_id) do
-    case GameServer.game_pid(game_id) do
+    case GameServer.find_game_pid(game_id) do
       pid when is_pid(pid) -> DynamicSupervisor.terminate_child(__MODULE__, pid)
       nil -> :ok
     end
