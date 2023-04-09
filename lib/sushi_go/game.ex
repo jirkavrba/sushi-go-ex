@@ -11,27 +11,31 @@ defmodule SushiGo.Game do
   @type t :: %__MODULE__{
           code: GameCode.t(),
           players: list(Player.t()),
-          round: integer()
+          round: integer(),
+          started: boolean()
         }
 
   @enforce_keys [:code, :players, :round]
 
-  defstruct [:code, :players, :round]
+  defstruct [:code, :players, :round, started: false]
 
   @spec new(GameCode.t()) :: t()
   def new(%GameCode{} = code) do
     %__MODULE__{
       code: code,
       players: [],
-      round: 0
+      round: 0,
+      started: false
     }
   end
 
   @doc "Add a new player to the game"
   @spec add_player(t(), Player.t()) :: t()
+  def add_player(%__MODULE__{ started: true } = game, %Player{}), do: game
   def add_player(%__MODULE__{} = game, %Player{} = player) do
     %__MODULE__{game | players: game.players ++ [player]}
   end
+
 
   @doc "Start a new game round together with dealing players new cards"
   @spec start_new_round(t()) :: t()
