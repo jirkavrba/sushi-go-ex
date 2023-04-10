@@ -4,7 +4,6 @@ defmodule SushiGo.Game do
   This struct is used in game servers to keep track of the game state and perform player actions.
   """
 
-  alias SushiGo.Game
   alias SushiGo.Cards
   alias SushiGo.GameCode
   alias SushiGo.Player
@@ -112,6 +111,6 @@ defmodule SushiGo.Game do
         }
       end)
 
-    %Game{game | players: updated_players}
+    %__MODULE__{game | players: updated_players}
   end
 end
