@@ -76,4 +76,40 @@ defmodule SushiGo.Game do
 
     %__MODULE__{game | round: game.round + 1, players: updated_players}
   end
+
+  @spec finish_round(t()) :: t()
+  def finish_round(%__MODULE__{} = game) do
+    maki_leaderboard =
+      game.players
+      |> Enum.map(fn %Player{collected_cards: cards} = player ->
+        {player, Cards.count_maki(cards)}
+      end)
+      |> Enum.sort_by(fn {_, maki} -> maki end, :desc)
+
+    maki_is_tie = elem(maki_leaderboard[0], 0) == elem(maki_leaderboard[1], 0)
+
+    updated_players =
+      game.players
+      |> Enum.map(fn %Player{} = player ->
+        maki_index = Enum.find_index(maki_leaderboard, fn {p, _} -> p == player end)
+
+        maki_points =
+          cond do
+            maki_is_tie and maki_index < 2 -> 3
+            not maki_is_tie and maki_index == 0 -> 6
+            not maki_is_tie and maki_index == 1 -> 3
+            true -> 0
+          end
+
+        score = Cards.score(player.collected_cards, maki_points)
+        puddings = Enum.count(player.collected_cards, fn item -> item == :pudding end)
+
+        %Player{player
+          | accumulated_score: player.accumulated_score + score,
+            puddings: player.puddings + puddings
+        }
+      end)
+
+    game
+  end
 end
