@@ -29,13 +29,14 @@ defmodule SushiGo.Game do
     }
   end
 
-  @doc "Add a new player to the game"
-  @spec add_player(t(), Player.t()) :: t()
-  def add_player(%__MODULE__{started: true} = game, %Player{}), do: game
+  @doc "Join the game as a new player"
+  @spec join(t(), Player.t()) :: t()
+  def join(%__MODULE__{started: true} = game, %Player{}), do: game
 
-  def add_player(%__MODULE__{} = game, %Player{} = player) do
+  def join(%__MODULE__{} = game, %Player{} = player) do
     %__MODULE__{game | players: game.players ++ [player]}
   end
+
 
   @doc "Start a new game round together with dealing players new cards"
   @spec start_new_round(t()) :: t()
