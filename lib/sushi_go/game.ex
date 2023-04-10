@@ -4,6 +4,7 @@ defmodule SushiGo.Game do
   This struct is used in game servers to keep track of the game state and perform player actions.
   """
 
+  alias SushiGo.Game
   alias SushiGo.Cards
   alias SushiGo.GameCode
   alias SushiGo.Player
@@ -104,12 +105,13 @@ defmodule SushiGo.Game do
         score = Cards.score(player.collected_cards, maki_points)
         puddings = Enum.count(player.collected_cards, fn item -> item == :pudding end)
 
-        %Player{player
+        %Player{
+          player
           | accumulated_score: player.accumulated_score + score,
             puddings: player.puddings + puddings
         }
       end)
 
-    game
+    %Game{game | players: updated_players}
   end
 end
