@@ -132,4 +132,23 @@ defmodule SushiGo.Game do
 
     %__MODULE__{game | players: updated_players}
   end
+
+  @spec swap_with_chopsticks(t(), String.t(), Cards.card()) :: t()
+  def swap_with_chopsticks(%__MODULE__{} = game, player_id, card) do
+    updated_players =
+      game.players
+      |> Enum.map(fn %Player{} = player ->
+        if player.id == player_id and Enum.member?(player.available_cards, card) and Enum.member?(player.collected_cards, :chopsticks) do
+          %Player{
+            player
+            | picked_cards: player.picked_cards ++ [card] -- [:chopsticks],
+              available_cards: (player.available_cards -- [card]) ++ [:chopsticks]
+          }
+        else
+          player
+        end
+      end)
+
+    %__MODULE__{game | players: updated_players}
+  end
 end
