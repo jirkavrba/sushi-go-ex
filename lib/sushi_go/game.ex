@@ -113,4 +113,23 @@ defmodule SushiGo.Game do
 
     %__MODULE__{game | players: updated_players}
   end
+
+  @spec pick_card(t(), Player.t(), Cards.card()) :: t()
+  def pick_card(%__MODULE__{} = game, player_id, card) do
+    updated_players =
+      game.players
+      |> Enum.map(fn %Player{} = player ->
+        if player.id == player_id and Enum.member?(player.available_cards, card) do
+          %Player{
+            player
+            | picked_cards: [card],
+              available_cards: (player.available_cards -- [card]) ++ player.picked_cards
+          }
+        else
+          player
+        end
+      end)
+
+    %__MODULE__{game | players: updated_players}
+  end
 end
