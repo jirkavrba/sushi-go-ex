@@ -13,7 +13,7 @@ defmodule SushiGo.GameTest do
     assert game.started == false
 
     player = Player.new("jirka")
-    game = Game.add_player(game, player)
+    game = Game.join(game, player)
 
     assert length(game.players) == 1
     assert hd(game.players) == player
@@ -36,7 +36,7 @@ defmodule SushiGo.GameTest do
     assert game.started == true
 
     player = Player.new("another one")
-    game = Game.add_player(game, player)
+    game = Game.join(game, player)
 
     assert length(game.players) == 2
     assert game.started == true
