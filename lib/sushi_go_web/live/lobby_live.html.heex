@@ -1,0 +1,9 @@
+<h1>Sushi Go! online</h1>
+
+<%= if (@player == "") do %>
+    <.form for={@form} phx-change="validate-player" phx-submit="create-player">
+        Choose your username:
+        <.input type="text" field={@form[:username]}/>
+        <.button disabled={!@valid}>Submit</.button>
+    </.form>
+<% end %>

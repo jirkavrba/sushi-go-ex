@@ -17,7 +17,7 @@ defmodule SushiGoWeb.Router do
   scope "/", SushiGoWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", LobbyLive
     get "/join", GameController, :join
     get "/leave", GameController, :leave
     get "/game/:code", GameController, :index
