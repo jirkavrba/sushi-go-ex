@@ -18,6 +18,9 @@ defmodule SushiGoWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/join", GameController, :join
+    get "/leave", GameController, :leave
+    get "/game/:code", GameController, :index
   end
 
   # Other scopes may use custom stacks.
