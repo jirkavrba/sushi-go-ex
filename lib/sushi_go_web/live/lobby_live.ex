@@ -30,10 +30,10 @@ defmodule SushiGoWeb.LobbyLive do
     socket =
       case GameServer.join(code.game_id, player) do
         :ok ->
-          socket |> push_redirect(to: "/game")
+          socket
+          |> push_redirect(to: ~p"/join?#{%{player: player.id, invite: code.game_code}}")
 
-        {:error, error} ->
-          dbg(error)
+        {:error, _error} ->
           socket
       end
 
