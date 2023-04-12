@@ -5,8 +5,14 @@ defmodule SushiGoWeb.LobbyLive do
   alias SushiGo.GameCode
   use SushiGoWeb, :live_view
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, player: "", valid: false, form: to_form(%{"username" => ""}))}
+  def mount(params, _session, socket) do
+    socket = socket
+    |> assign(:player, "")
+    |> assign(:valid, false)
+    |> assign(:form, to_form(%{"username" => ""}))
+    |> assign(:invite, params["invite"] || "")
+
+    {:ok, socket}
   end
 
   def handle_event("validate-player", %{"username" => username}, socket) do

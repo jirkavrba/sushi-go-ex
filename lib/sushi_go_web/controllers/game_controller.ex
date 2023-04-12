@@ -1,6 +1,9 @@
 defmodule SushiGoWeb.GameController do
   use SushiGoWeb, :controller
 
+  alias SushiGoWeb.GameLive
+  import Phoenix.LiveView.Controller
+
   @join_params_schema %{
     invite: [type: :string, required: true],
     player: [type: :string, required: true]
@@ -27,18 +30,25 @@ defmodule SushiGoWeb.GameController do
     |> redirect(to: ~p"/")
   end
 
-
   @index_params_schema %{
     invite: [type: :string, required: true]
   }
 
   def index(conn, params) do
-    with {:ok, validated_params} <- Tarams.cast(params, @index_params_schema) do
-      conn
-      |> put_session(:invite, validated_params.invite)
-      # render game liveview
+    with player_id <- get_session(conn, :player), invite <- get_session(conn, :invite) do
+      # Player doesn't have a session or is connected to another game
+      if is_nil(player_id) or invite != params["invite"] do
+        redirect(conn, to: ~p"/?#{%{invite: params["invite"]}}")
+      else
+        live_render(conn, GameLive,
+          session: %{
+            "invite" => invite,
+            "player" => player_id
+          }
+        )
+      end
     else
-      _ -> conn |> redirect(to: ~p"/")
+      _ -> redirect(conn, to: ~p"/?#{%{invite: params["invite"]}}")
     end
   end
 end

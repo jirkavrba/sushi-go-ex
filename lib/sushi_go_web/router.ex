@@ -20,7 +20,7 @@ defmodule SushiGoWeb.Router do
     live "/", LobbyLive
     get "/join", GameController, :join
     get "/leave", GameController, :leave
-    get "/game/:code", GameController, :index
+    get "/game/:invite", GameController, :index
   end
 
   # Other scopes may use custom stacks.
