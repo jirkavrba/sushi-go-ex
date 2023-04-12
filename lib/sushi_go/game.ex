@@ -30,13 +30,12 @@ defmodule SushiGo.Game do
   end
 
   @doc "Join the game as a new player"
-  @spec join(t(), Player.t()) :: t()
-  def join(%__MODULE__{started: true} = game, %Player{}), do: game
+  @spec join(t(), Player.t()) :: {:ok, t()} | {:error, atom()}
+  def join(%__MODULE__{started: true}, %Player{}), do: {:error, :game_started}
 
   def join(%__MODULE__{} = game, %Player{} = player) do
-    %__MODULE__{game | players: game.players ++ [player]}
+    {:ok, %__MODULE__{game | players: game.players ++ [player]}}
   end
-
 
   @doc "Start a new game round together with dealing players new cards"
   @spec start_new_round(t()) :: t()
@@ -139,10 +138,11 @@ defmodule SushiGo.Game do
     updated_players =
       game.players
       |> Enum.map(fn %Player{} = player ->
-        if player.id == player_id and Enum.member?(player.available_cards, card) and Enum.member?(player.collected_cards, :chopsticks) do
+        if player.id == player_id and Enum.member?(player.available_cards, card) and
+             Enum.member?(player.collected_cards, :chopsticks) do
           %Player{
             player
-            | picked_cards: player.picked_cards ++ [card] -- [:chopsticks],
+            | picked_cards: player.picked_cards ++ ([card] -- [:chopsticks]),
               available_cards: (player.available_cards -- [card]) ++ [:chopsticks]
           }
         else

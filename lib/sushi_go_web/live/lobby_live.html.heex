@@ -3,7 +3,12 @@
 <%= if (@player == "") do %>
     <.form for={@form} phx-change="validate-player" phx-submit="create-player">
         Choose your username:
-        <.input type="text" field={@form[:username]}/>
+        <.input type="text" field={@form[:username]} autocomplete="off"/>
         <.button disabled={!@valid}>Submit</.button>
     </.form>
+<% else %>
+    <%= @player %>
+    <div>
+        <.button phx-click="create-new-game">Create a new game</.button>
+    </div>
 <% end %>
