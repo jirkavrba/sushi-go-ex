@@ -162,14 +162,6 @@ defmodule SushiGo.GameServer do
     end
   end
 
-  @spec cast_by_name(String.t(), any()) :: :ok
-  defp cast_by_name(game_id, query) when is_binary(game_id) do
-    case find_game_pid(game_id) do
-      game_pid when is_pid(game_pid) -> GenServer.cast(game_pid, query)
-      nil -> {:error, :game_not_found}
-    end
-  end
-
   @spec broadcast!(String.t(), atom(), map()) :: :ok
   defp broadcast!(channel_id, event, payload) do
     Phoenix.PubSub.broadcast!(SushiGo.PubSub, channel_id, %{event: event, payload: payload})
