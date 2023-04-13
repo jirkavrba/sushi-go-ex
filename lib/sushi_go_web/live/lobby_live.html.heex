@@ -1,16 +1,19 @@
 <h1>Sushi Go! online</h1>
 
-<%= @invite %>
-
 <%= if (@player == "") do %>
-    <.form for={@form} phx-change="validate-player" phx-submit="create-player">
+    <.form for={@username_form} phx-change="validate-player" phx-submit="create-player">
         Choose your username:
-        <.input type="text" field={@form[:username]} autocomplete="off"/>
-        <.button disabled={!@valid}>Submit</.button>
+        <.input type="text" field={@username_form[:username]} autocomplete="off"/>
+        <.button disabled={!@valid_username}>Submit</.button>
     </.form>
 <% else %>
     <%= @player %>
-    <div>
-        <.button phx-click="create-new-game">Create a new game</.button>
+    <div class="flex flex-row items-center justify-between">
+        <.button phx-click="create-game">Create a new game</.button>
+
+        <.form for={@invite_form} phx-change="validate-invite" phx-submit="join-game">
+            <.input type="text" field={@invite_form[:invite]}/>
+            <.button disabled={!@valid_invite}>Join game with code</.button>
+        </.form>
     </div>
 <% end %>
