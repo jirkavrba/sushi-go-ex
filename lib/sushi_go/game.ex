@@ -14,12 +14,13 @@ defmodule SushiGo.Game do
           code: GameCode.t(),
           players: list(Player.t()),
           round: integer(),
-          started: boolean()
+          started: boolean(),
+          finished: boolean()
         }
 
   @enforce_keys [:code, :players, :round]
 
-  defstruct [:code, :players, :round, started: false]
+  defstruct [:code, :players, :round, started: false, finished: false]
 
   @spec new(GameCode.t()) :: t()
   def new(%GameCode{} = code) do
@@ -27,9 +28,13 @@ defmodule SushiGo.Game do
       code: code,
       players: [],
       round: 0,
-      started: false
+      started: false,
+      finished: false
     }
   end
+
+  # TODO: Make this configurable in lobby?
+  @game_rounds 3
 
   @doc "Join the game as a new player"
   @spec join(t(), Player.t()) :: {:ok, t()} | {:error, atom()}
@@ -133,6 +138,30 @@ defmodule SushiGo.Game do
     start_new_round(%__MODULE__{game | players: updated_players})
   end
 
+  @spec finish_game(t()) :: t()
+  def finish_game(%__MODULE__{} = game) do
+    puddings = Enum.map(game.players, fn %Player{puddings: puddings} -> puddings end)
+    max_puddings = Enum.max(puddings)
+    min_puddings = Enum.min(puddings)
+
+    updated_players =
+      game.players
+      |> Enum.map(fn %Player{puddings: puddings} = player ->
+        cond do
+          puddings == max_puddings ->
+            %Player{player | accumulated_score: player.accumulated_score + 6}
+
+          puddings == min_puddings ->
+            %Player{player | accumulated_score: player.accumulated_score - 6}
+
+          true ->
+            player
+        end
+      end)
+
+    %__MODULE__{game | players: updated_players, finished: true}
+  end
+
   @spec rotate_cards(t()) :: t()
   def rotate_cards(%__MODULE__{} = game) do
     shift = if Integer.is_even(game.round), do: -1, else: 1
@@ -219,5 +248,6 @@ defmodule SushiGo.Game do
     updated_game
     |> then(fn game -> if all_players_finished_picking?, do: rotate_cards(game), else: game end)
     |> then(fn game -> if all_cards_have_been_picked?, do: finish_round(game), else: game end)
+    |> then(fn game -> if game.round > @game_rounds, do: finish_game(game), else: game end)
   end
 end
