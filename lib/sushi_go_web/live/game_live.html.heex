@@ -19,7 +19,9 @@
     <div class="flex flex-col flex-grow gap-4 justify-start items-stretch">
       <%= for player <- @game.players do %>
         <div class={"flex flex-row items-center p-4 gap-4 rounded-xl #{lane_class(player, @player.id == player.id)}"}>
-          <i class={"text-white text-3xl fa-solid mx-4 #{if player.finished_picking, do: "fa-square-check", else: "fa-hourglass-half animate-pulse"}"} />
+          <div class="w-8 h-8 mr-2">
+            <i class={"text-white text-3xl fa-solid #{if player.finished_picking, do: "fa-square-check", else: "fa-hourglass-half animate-pulse"}"} />
+          </div>
           <div class="flex flex-col flex-grow items-start text-white font-black">
             <div class="flex flex-row items-center gap-4">
               <div><%= player.username %></div>
@@ -69,7 +71,11 @@
       <div class="flex flex-row gap-4 items-center justify-between bg-gray-800 p-2 rounded-t-3xl shadow-xl">
         <div class="flex flex-row items-center">
           <%= for card <- Enum.sort(@player.available_cards) do %>
-            <div class="bg-white bg-opacity-10 rounded-xl p-4 m-2 transition transform hover:bg-opacity-50 hover:-translate-y-2 cursor-pointer" phx-click="pick-card" phx-value-card={card}>
+            <div
+              class="bg-white bg-opacity-10 rounded-xl p-4 m-2 transition transform hover:bg-opacity-50 hover:-translate-y-2 cursor-pointer"
+              phx-click="pick-card"
+              phx-value-card={card}
+            >
               <%= card_image(card) %>
             </div>
           <% end %>
