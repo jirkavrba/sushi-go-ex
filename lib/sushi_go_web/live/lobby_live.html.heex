@@ -45,6 +45,7 @@
             field={@invite_form[:invite]}
             class="text-center text-xs uppercase font-bold"
             placeholder="code"
+            maxlength={3}
           />
           <.button disabled={!@valid_invite} colors="bg-white text-black shadow-xl">
             Join game with code
@@ -52,6 +53,12 @@
         </.form>
       </div>
     </div>
+
+    <%= if @error != nil do %>
+        <div>
+            <%= @error %>
+        </div>
+    <% end %>
 
     <div class="flex flex-row gap-10 items-center justify-center bg-neutral-100 p-10 mt-10 rounded-xl">
       <i class="fa-solid fa-book text-4xl text-neutral-300"></i>

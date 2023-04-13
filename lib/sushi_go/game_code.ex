@@ -26,7 +26,7 @@ defmodule SushiGo.GameCode do
 
   @spec generate_code() :: String.t()
   defp generate_code() do
-    MnemonicSlugs.generate_slug(3)
+    for _ <- 1..3, into: "", do: <<Enum.random(?A..?Z)>>
   end
 
   @spec generate_game_id(String.t()) :: String.t()

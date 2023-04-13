@@ -16,6 +16,7 @@ defmodule SushiGoWeb.LobbyLive do
       |> assign(:valid_invite, is_valid_invite(invite))
       |> assign(:username_form, to_form(%{"username" => ""}))
       |> assign(:invite_form, to_form(%{"invite" => invite}))
+      |> assign(:error, nil)
 
     {:ok, socket}
   end
@@ -46,6 +47,7 @@ defmodule SushiGoWeb.LobbyLive do
       case GameServer.join(code.game_id, player) do
         :ok ->
           socket
+          |> assign(:error, nil)
           |> push_redirect(to: ~p"/join?#{%{player: player.id, invite: code.game_code}}")
 
         _ ->
@@ -56,14 +58,19 @@ defmodule SushiGoWeb.LobbyLive do
   end
 
   def handle_event("join-game", %{"invite" => invite}, socket) do
-    code = GameCode.new(invite)
+    code = GameCode.new(String.upcase(invite))
     player = Player.new(socket.assigns[:player])
 
     socket =
       case GameServer.join(code.game_id, player) do
         :ok ->
           socket
+          |> assign(:error, nil)
           |> push_redirect(to: ~p"/join?#{%{player: player.id, invite: code.game_code}}")
+
+        {:error, :game_not_found} ->
+          socket
+          |> assign(:error, "Game was not found!")
 
         _ ->
           socket
@@ -72,17 +79,24 @@ defmodule SushiGoWeb.LobbyLive do
     {:noreply, socket}
   end
 
+  @spec format_invite(String.t()) :: String.t()
+  def format_invite(invite) when is_binary(invite) do
+    invite
+    |> String.trim()
+    |> String.upcase()
+  end
+
   @spec is_valid_username(String.t()) :: boolean()
   defp is_valid_username(username) when is_binary(username) do
     username
     |> String.trim()
-    |> String.length() > 2
+    |> String.length() >= 2
   end
 
   @spec is_valid_invite(String.t()) :: boolean()
   defp is_valid_invite(invite) when is_binary(invite) do
     invite
-    |> String.trim()
-    |> String.match?(~r/^[a-z]+(-[a-z]+)+$/)
+    |> format_invite()
+    |> String.match?(~r/^[A-Z]{3}$/)
   end
 end
