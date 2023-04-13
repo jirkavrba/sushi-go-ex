@@ -40,7 +40,7 @@ defmodule SushiGo.Game do
   @spec leave(t(), Player.t()) :: {:ok, t()}
   def leave(%__MODULE__{} = game, %Player{} = player) do
     # TODO: Delete games with < 1 player?
-    {:ok , %__MODULE__{game | players: game.players -- [player]}}
+    {:ok, %__MODULE__{game | players: game.players -- [player]}}
   end
 
   @spec find_player(t(), String.t()) :: {:ok, Player.t()} | {:error, :player_not_found}
@@ -130,7 +130,7 @@ defmodule SushiGo.Game do
     %__MODULE__{game | players: updated_players}
   end
 
-  @spec pick_card(t(), Player.t(), Cards.card()) :: t()
+  @spec pick_card(t(), String.t(), Cards.card()) :: t()
   def pick_card(%__MODULE__{} = game, player_id, card) do
     updated_players =
       game.players
@@ -165,6 +165,24 @@ defmodule SushiGo.Game do
           player
         end
       end)
+
+    %__MODULE__{game | players: updated_players}
+  end
+
+  @spec finish_picking(t(), String.t()) :: t()
+  def finish_picking(%__MODULE__{} = game, player_id) do
+    updated_players =
+      game.players
+      |> Enum.map(fn %Player{} = player ->
+        if player.id == player_id and not Enum.empty?(player.picked_cards) do
+          %Player{player | finished_picking: true}
+        else
+          player
+        end
+      end)
+
+    # TODO: Switch cards after all players have picked their cards
+    all_players_finished_picking = Enum.all?(updated_players, fn %Player{} = player -> player.finished_picking end)
 
     %__MODULE__{game | players: updated_players}
   end

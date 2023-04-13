@@ -39,7 +39,20 @@ defmodule SushiGo.GameServer do
   def start(game_id, %Player{} = player) when is_binary(game_id) do
     with {:ok, updated_game} <- call_by_name(game_id, {:start, player}) do
       broadcast!(game_id, :game_updated, updated_game)
-      Enum.each(updated_game.players, fn player -> broadcast!("player:#{player.id}", :player_updated, player) end)
+    end
+  end
+
+  @spec pick_card(String.t(), String.t(), Cards.card()) :: :ok
+  def pick_card(game_id, player_id, card) when is_binary(game_id) and is_binary(player_id) do
+    with {:ok, updated_game} <- call_by_name(game_id, {:pick_card, player_id, card}) do
+      broadcast!(game_id, :game_updated, updated_game)
+    end
+  end
+
+  @spec finish_picking(String.t(), String.t()) :: :ok
+  def finish_picking(game_id, player_id) when is_binary(game_id) and is_binary(player_id) do
+    with {:ok, updated_game} <- call_by_name(game_id, {:finish_picking, player_id}) do
+      broadcast!(game_id, :gam_updated, updated_game)
     end
   end
 
@@ -80,6 +93,18 @@ defmodule SushiGo.GameServer do
   def handle_call({:start, _player}, _from, state) do
     # TODO: Log who started the game to the game chat
     updated_game = Game.start_new_round(state.game)
+    {:reply, {:ok, updated_game}, %{state | game: updated_game}}
+  end
+
+  @impl GenServer
+  def handle_call({:pick_card, player_id, card}, _from, state) do
+    updated_game = Game.pick_card(state.game, player_id, card)
+    {:reply, {:ok, updated_game}, %{state | game: updated_game}}
+  end
+
+  @impl GenServer
+  def handle_call({:finish_picking, player_id}, _from, state) do
+    updated_game = Game.finish_picking(state.game, player_id)
     {:reply, {:ok, updated_game}, %{state | game: updated_game}}
   end
 

@@ -1,6 +1,7 @@
 defmodule SushiGoWeb.GameLive do
   use SushiGoWeb, :live_view
 
+  alias SushiGo.Game
   alias SushiGo.GameServer
 
   def mount(_params, session, socket) do
@@ -9,18 +10,26 @@ defmodule SushiGoWeb.GameLive do
          {:ok, player} <- GameServer.find_player(invite, player),
          :ok <- Phoenix.PubSub.subscribe(SushiGo.PubSub, game.code.game_id),
          :ok <- Phoenix.PubSub.subscribe(SushiGo.PubSub, "player:#{player.id}") do
-      {:ok, assign(socket, game: game, player: player)}
+      socket =
+        socket
+        |> assign(:game, game)
+        |> assign(:player, extract_player(game, player.id))
+        |> assign(:player_id, player.id)
+        |> assign(:game_id, game.code.game_id)
+
+      {:ok, socket}
     else
       _ -> {:ok, push_redirect(socket, to: ~p"/")}
     end
   end
 
   def handle_info(%{event: :game_updated, payload: game}, socket) do
-    {:noreply, assign(socket, game: game)}
-  end
+    socket =
+      socket
+      |> assign(:game, game)
+      |> assign(:player, extract_player(game, socket.assigns.player_id))
 
-  def handle_info(%{event: :player_updated, payload: player}, socket) do
-    {:noreply, assign(socket, player: player)}
+    {:noreply, socket}
   end
 
   def handle_event("leave", _params, socket) do
@@ -32,10 +41,26 @@ defmodule SushiGoWeb.GameLive do
   end
 
   def handle_event("start", _params, socket) do
-    %{game: game, player: player} = socket.assigns
+    GameServer.start(socket.assigns.game_id, socket.assigns.player)
+    {:noreply, socket}
+  end
 
-    GameServer.start(game.code.game_id, player)
+  def handle_event("pick-card", %{"card" => card}, socket) do
+    GameServer.pick_card(
+      socket.assigns.game_id,
+      socket.assigns.player_id,
+      String.to_existing_atom(card)
+    )
 
     {:noreply, socket}
+  end
+
+  def handle_event("finish-picking", _params, socket) do
+    GameServer.finish_picking(socket.assigns.game_id, socket.assigns.player_id)
+    {:noreply, socket}
+  end
+
+  defp extract_player(%Game{players: players}, player_id) when is_binary(player_id) do
+    Enum.find(players, nil, fn player -> player.id == player_id end)
   end
 end
