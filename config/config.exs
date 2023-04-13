@@ -17,6 +17,11 @@ config :sushi_go, SushiGoWeb.Endpoint,
   pubsub_server: SushiGo.PubSub,
   live_view: [signing_salt: "dwzJ3vWx"]
 
+# Configures translations and i18n
+config :sushi_go, SushiGoWeb.Gettext,
+  locales: ~w[en cs],
+  default_locale: "en"
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.14.41",
