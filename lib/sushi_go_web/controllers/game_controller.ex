@@ -39,7 +39,9 @@ defmodule SushiGoWeb.GameController do
       if is_nil(player_id) or invite != params["invite"] do
         redirect(conn, to: ~p"/?#{%{invite: params["invite"]}}")
       else
-        live_render(conn, GameLive,
+        conn
+        |> put_layout(false)
+        |> live_render(GameLive,
           session: %{
             "invite" => invite,
             "player" => player_id
