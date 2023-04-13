@@ -2,6 +2,11 @@ GAME id: <%= @game.code.game_id %>, invite: <strong><%= @game.code.game_code %><
 PLAYER_ID <%= @player.id %>
 
 <%= if @game.started do %>
+    <div>
+        Round #<%= @game.round %>
+
+        
+    </div>
 <% else %>
   <div class="flex flex-row">
     <%= for player <- @game.players do %>
@@ -12,6 +17,6 @@ PLAYER_ID <%= @player.id %>
     <% end %>
   </div>
 
-  <.button disabled={length(@game.players) < 2}>Start the game</.button>
+  <.button disabled={length(@game.players) < 2} phx-click="start">Start the game</.button>
   <.button phx-click="leave">Leave</.button>
 <% end %>
