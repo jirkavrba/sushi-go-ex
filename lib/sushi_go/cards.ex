@@ -24,7 +24,7 @@ defmodule SushiGo.Cards do
     [
       List.duplicate(:tempura, 14),
       List.duplicate(:sashimi, 14),
-      List.duplicate(:dumplings, 14),
+      List.duplicate(:dumpling, 14),
       List.duplicate(:one_maki, 6),
       List.duplicate(:two_maki, 12),
       List.duplicate(:three_maki, 8),

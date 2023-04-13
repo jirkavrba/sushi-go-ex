@@ -8,6 +8,8 @@ defmodule SushiGo.Game do
   alias SushiGo.GameCode
   alias SushiGo.Player
 
+  require Integer
+
   @type t :: %__MODULE__{
           code: GameCode.t(),
           players: list(Player.t()),
@@ -102,7 +104,8 @@ defmodule SushiGo.Game do
       end)
       |> Enum.sort_by(fn {_, maki} -> maki end, :desc)
 
-    maki_is_tie = elem(maki_leaderboard[0], 0) == elem(maki_leaderboard[1], 0)
+    [first, second] = Enum.take(maki_leaderboard, 2)
+    maki_is_tie = elem(first, 1) == elem(second, 1)
 
     updated_players =
       game.players
@@ -124,6 +127,30 @@ defmodule SushiGo.Game do
           player
           | accumulated_score: player.accumulated_score + score,
             puddings: player.puddings + puddings
+        }
+      end)
+
+    start_new_round(%__MODULE__{game | players: updated_players})
+  end
+
+  @spec rotate_cards(t()) :: t()
+  def rotate_cards(%__MODULE__{} = game) do
+    shift = if Integer.is_even(game.round), do: -1, else: 1
+    cards = Enum.map(game.players, fn %Player{available_cards: cards} -> cards end)
+    total_players = length(game.players)
+
+    updated_players =
+      game.players
+      |> Enum.with_index()
+      |> Enum.map(fn {%Player{} = player, index} ->
+        new_cards = Enum.at(cards, Integer.mod(total_players + index + shift, total_players))
+
+        %Player{
+          player
+          | collected_cards: player.collected_cards ++ player.picked_cards,
+            available_cards: new_cards,
+            picked_cards: [],
+            finished_picking: false
         }
       end)
 
@@ -181,9 +208,16 @@ defmodule SushiGo.Game do
         end
       end)
 
-    # TODO: Switch cards after all players have picked their cards
-    all_players_finished_picking = Enum.all?(updated_players, fn %Player{} = player -> player.finished_picking end)
+    updated_game = %__MODULE__{game | players: updated_players}
 
-    %__MODULE__{game | players: updated_players}
+    all_players_finished_picking? =
+      Enum.all?(updated_players, fn %Player{} = player -> player.finished_picking end)
+
+    all_cards_have_been_picked? =
+      Enum.all?(updated_players, fn %Player{} = player -> Enum.empty?(player.available_cards) end)
+
+    updated_game
+    |> then(fn game -> if all_players_finished_picking?, do: rotate_cards(game), else: game end)
+    |> then(fn game -> if all_cards_have_been_picked?, do: finish_round(game), else: game end)
   end
 end

@@ -52,7 +52,7 @@ defmodule SushiGo.GameServer do
   @spec finish_picking(String.t(), String.t()) :: :ok
   def finish_picking(game_id, player_id) when is_binary(game_id) and is_binary(player_id) do
     with {:ok, updated_game} <- call_by_name(game_id, {:finish_picking, player_id}) do
-      broadcast!(game_id, :gam_updated, updated_game)
+      broadcast!(game_id, :game_updated, updated_game)
     end
   end
 
