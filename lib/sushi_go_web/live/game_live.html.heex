@@ -2,59 +2,72 @@ GAME id: <%= @game.code.game_id %>, invite: <strong><%= @game.code.game_code %><
 PLAYER_ID <%= @player.id %>
 
 <%= if @game.started do %>
-  <div>
+  <%= if @game.finished do %>
     <div>
-      Round #<%= @game.round %>
+      <h1>Thanks for playing</h1>
+      <ul>
+        <%= for player <- Enum.sort_by(@game.players, fn %{accumulated_score: score} -> score end, :desc) do %>
+          <li>
+            <%= player.username %> &bull; <%= player.accumulated_score %> points
+          </li>
+        <% end %>
+      </ul>
     </div>
+  <% else %>
+    <div>
+      <div>
+        Round #<%= @game.round %>
+      </div>
 
-    <%= for player <- @game.players do %>
-      <div class={if @player.id == player.id, do: "bg-red-500", else: "bg-neutral-100"}>
-        <%= player.username %> &bull; <%= player.accumulated_score %> points, <%= player.puddings %> puddings, <%= if player.finished_picking,
-          do: "finished picking",
-          else: "still picking..." %>
+      <%= for player <- @game.players do %>
+        <div class={if @player.id == player.id, do: "bg-red-500", else: "bg-neutral-100"}>
+          <%= player.username %> &bull; <%= player.accumulated_score %> points, <%= player.puddings %> puddings, <%= if player.finished_picking,
+            do: "finished picking",
+            else: "still picking..." %>
 
-        <div class="flex flex-row">
-          <%= for card <- player.collected_cards do %>
-            <div class="bg-red-100 p-4 m-4">
-              <%= if @player.id == player.id and card == :chopsticks do %>
-                <%= card %>
-                <.button>Swap</.button>
-              <% else %>
-                <%= card %>
-              <% end %>
-            </div>
-          <% end %>
-          <%= for card <- player.picked_cards do %>
-            <%= if @player.id == player.id do %>
-              <div class="bg-purple-100 p-4 m-4">
-                <%= card %>
-              </div>
-            <% else %>
-              <div class="bg-amber-100 p-4 m-4">
-                HIDDEN
+          <div class="flex flex-row">
+            <%= for card <- player.collected_cards do %>
+              <div class="bg-red-100 p-4 m-4">
+                <%= if @player.id == player.id and card == :chopsticks do %>
+                  <%= card %>
+                  <.button>Swap</.button>
+                <% else %>
+                  <%= card %>
+                <% end %>
               </div>
             <% end %>
-          <% end %>
-        </div>
-      </div>
-    <% end %>
-
-    <div class="flex flex-row">
-      <%= unless @player.finished_picking do %>
-        <%= for card <- Enum.sort(@player.available_cards) do %>
-          <div class="bg-blue-100 p-4 m-4" phx-click="pick-card" phx-value-card={card}>
-            <%= card %>
+            <%= for card <- player.picked_cards do %>
+              <%= if @player.id == player.id do %>
+                <div class="bg-purple-100 p-4 m-4">
+                  <%= card %>
+                </div>
+              <% else %>
+                <div class="bg-amber-100 p-4 m-4">
+                  HIDDEN
+                </div>
+              <% end %>
+            <% end %>
           </div>
+        </div>
+      <% end %>
+
+      <div class="flex flex-row">
+        <%= unless @player.finished_picking do %>
+          <%= for card <- Enum.sort(@player.available_cards) do %>
+            <div class="bg-blue-100 p-4 m-4" phx-click="pick-card" phx-value-card={card}>
+              <%= card %>
+            </div>
+          <% end %>
         <% end %>
+      </div>
+
+      <%= unless @player.finished_picking do %>
+        <.button disabled={Enum.empty?(@player.picked_cards)} phx-click="finish-picking">
+          Finish picking
+        </.button>
       <% end %>
     </div>
-
-    <%= unless @player.finished_picking do %>
-      <.button disabled={Enum.empty?(@player.picked_cards)} phx-click="finish-picking">
-        Finish picking
-      </.button>
-    <% end %>
-  </div>
+  <% end %>
 <% else %>
   <div class="flex flex-row">
     <%= for player <- @game.players do %>
