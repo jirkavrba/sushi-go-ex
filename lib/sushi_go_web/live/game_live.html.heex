@@ -1,14 +1,15 @@
 <%= if @game.started do %>
   <%= if @game.finished do %>
-    <div>
-      <h1>Thanks for playing</h1>
-      <ul>
+    <div class="text-center">
+      <h1 class="text-4xl font-black">Thanks for playing!</h1>
+      <ul class="my-10">
         <%= for player <- Enum.sort_by(@game.players, fn %{accumulated_score: score} -> score end, :desc) do %>
           <li>
             <%= player.username %> &bull; <%= player.accumulated_score %> points
           </li>
         <% end %>
       </ul>
+      <.button class="w-auto" phx-click="leave">Return to main menu</.button>
     </div>
   <% else %>
     <div class="text-2xl font-black mb-2">
