@@ -1,19 +1,74 @@
-<h1>Sushi Go! online</h1>
-
+    <h1 class="text-7xl font-black text-center mb-20">Sushi Go!</h1>
 <%= if (@player == "") do %>
-    <.form for={@username_form} phx-change="validate-player" phx-submit="create-player">
-        Choose your username:
-        <.input type="text" field={@username_form[:username]} autocomplete="off"/>
-        <.button disabled={!@valid_username}>Submit</.button>
+  <section class="flex flex-col items-center justify-center ">
+    <h1 class="text-xl font-black uppercase tracking wide bg-gradient-to-br from-red-500 to-amber-500 bg-clip-text text-transparent">
+      Select an username
+    </h1>
+    <.form
+      for={@username_form}
+      phx-change="validate-player"
+      phx-submit="create-player"
+      class="flex flex-col gap-4 xl:w-1/4"
+    >
+      <.input
+        type="text"
+        class="text-center font-black"
+        field={@username_form[:username]}
+        autocomplete="off"
+      />
+      <.button disabled={!@valid_username}>Continue</.button>
     </.form>
+  </section>
 <% else %>
-    <%= @player %>
-    <div class="flex flex-row items-center justify-between">
-        <.button phx-click="create-game">Create a new game</.button>
+  <section class="flex flex-col flex-grow items-stretch justify-center xl:w-1/2 mx-auto">
+    <div class="flex flex-row items-stretch gap-10">
+      <div class="flex flex-col items-center justify-between flex-1 bg-gradient-to-br from-cyan-400 to-blue-500 p-10 rounded-xl">
+        <i class="text-6xl text-white fa-solid fa-people-pulling"></i>
+        <.button
+          phx-click="create-game"
+          colors="bg-white text-black transition-all shadow-xl hover:shadow-2xl"
+        >
+          Create a new game
+        </.button>
+      </div>
 
-        <.form for={@invite_form} phx-change="validate-invite" phx-submit="join-game">
-            <.input type="text" field={@invite_form[:invite]}/>
-            <.button disabled={!@valid_invite}>Join game with code</.button>
+      <div class="flex flex-col items-center justify-between flex-1 bg-gradient-to-br from-green-400 to-emerald-500 p-10 rounded-xl">
+        <i class="text-6xl text-white fa-solid fa-person-walking-arrow-right"></i>
+        <.form
+          for={@invite_form}
+          phx-change="validate-invite"
+          phx-submit="join-game"
+          class="flex flex-col mt-10 gap-5"
+        >
+          <.input
+            type="text"
+            field={@invite_form[:invite]}
+            class="text-center text-xs uppercase font-bold"
+            placeholder="code"
+          />
+          <.button disabled={!@valid_invite} colors="bg-white text-black shadow-xl">
+            Join game with code
+          </.button>
         </.form>
+      </div>
     </div>
+
+    <div class="flex flex-row gap-10 items-center justify-center bg-neutral-100 p-10 mt-10 rounded-xl">
+      <i class="fa-solid fa-book text-4xl text-neutral-300"></i>
+      <div class="flex flex-col">
+        <strong>Don't know how to play?</strong>
+        <p>
+          You can watch
+          <a
+            href="https://www.youtube.com/watch?v=uSN0NoaeNbk"
+            target="_blank"
+            class="underline font-bold"
+          >
+            this short video
+          </a>
+          to learn the quite simple rules.
+        </p>
+      </div>
+    </div>
+  </section>
 <% end %>
