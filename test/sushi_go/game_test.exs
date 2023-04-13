@@ -9,7 +9,7 @@ defmodule SushiGo.GameTest do
     code = GameCode.new()
     game = Game.new(code)
 
-    assert length(game.players) == 0
+    assert Enum.empty?(game.players)
     assert game.started == false
 
     player = Player.new("jirka")

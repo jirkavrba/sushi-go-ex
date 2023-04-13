@@ -11,6 +11,7 @@ defmodule SushiGo.Player do
           collected_cards: list(Cards.card()),
           available_cards: list(Cards.card()),
           picked_cards: list(Cards.card()),
+          used_chopsticks: boolean(),
           finished_picking: boolean(),
           puddings: integer(),
           accumulated_score: integer()
@@ -24,6 +25,7 @@ defmodule SushiGo.Player do
     :collected_cards,
     :available_cards,
     :picked_cards,
+    used_chopsticks: false,
     finished_picking: false,
     puddings: 0,
     accumulated_score: 0

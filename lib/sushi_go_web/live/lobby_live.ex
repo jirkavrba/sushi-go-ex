@@ -48,8 +48,7 @@ defmodule SushiGoWeb.LobbyLive do
           socket
           |> push_redirect(to: ~p"/join?#{%{player: player.id, invite: code.game_code}}")
 
-        {:error, error} ->
-          dbg(error)
+        _ ->
           socket
       end
 
@@ -66,8 +65,7 @@ defmodule SushiGoWeb.LobbyLive do
           socket
           |> push_redirect(to: ~p"/join?#{%{player: player.id, invite: code.game_code}}")
 
-        {:error, error} ->
-          dbg(error)
+        _ ->
           socket
       end
 

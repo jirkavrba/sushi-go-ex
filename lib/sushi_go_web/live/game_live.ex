@@ -55,6 +55,15 @@ defmodule SushiGoWeb.GameLive do
     {:noreply, socket}
   end
 
+  def handle_event("use-chopsticks", _params, socket) do
+    GameServer.use_chopsticks(
+      socket.assigns.game_id,
+      socket.assigns.player_id
+    )
+
+    {:noreply, socket}
+  end
+
   def handle_event("finish-picking", _params, socket) do
     GameServer.finish_picking(socket.assigns.game_id, socket.assigns.player_id)
     {:noreply, socket}

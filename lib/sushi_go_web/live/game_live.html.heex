@@ -30,7 +30,7 @@ PLAYER_ID <%= @player.id %>
               <div class="bg-red-100 p-4 m-4">
                 <%= if @player.id == player.id and card == :chopsticks do %>
                   <%= card %>
-                  <.button>Swap</.button>
+                  <.button phx-click="use-chopsticks">Use</.button>
                 <% else %>
                   <%= card %>
                 <% end %>
@@ -62,7 +62,10 @@ PLAYER_ID <%= @player.id %>
       </div>
 
       <%= unless @player.finished_picking do %>
-        <.button disabled={Enum.empty?(@player.picked_cards)} phx-click="finish-picking">
+        <.button
+          disabled={length(@player.picked_cards) < if @player.used_chopsticks, do: 2, else: 1}
+          phx-click="finish-picking"
+        >
           Finish picking
         </.button>
       <% end %>

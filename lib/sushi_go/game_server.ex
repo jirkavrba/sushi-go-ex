@@ -49,6 +49,13 @@ defmodule SushiGo.GameServer do
     end
   end
 
+  @spec use_chopsticks(String.t(), String.t()) :: :ok
+  def use_chopsticks(game_id, player_id) when is_binary(game_id) and is_binary(player_id) do
+    with {:ok, updated_game} <- call_by_name(game_id, {:use_chopsticks, player_id}) do
+      broadcast!(game_id, :game_updated, updated_game)
+    end
+  end
+
   @spec finish_picking(String.t(), String.t()) :: :ok
   def finish_picking(game_id, player_id) when is_binary(game_id) and is_binary(player_id) do
     with {:ok, updated_game} <- call_by_name(game_id, {:finish_picking, player_id}) do
@@ -99,6 +106,12 @@ defmodule SushiGo.GameServer do
   @impl GenServer
   def handle_call({:pick_card, player_id, card}, _from, state) do
     updated_game = Game.pick_card(state.game, player_id, card)
+    {:reply, {:ok, updated_game}, %{state | game: updated_game}}
+  end
+
+  @impl GenServer
+  def handle_call({:use_chopsticks, player_id}, _from, state) do
+    updated_game = Game.use_chopsticks(state.game, player_id)
     {:reply, {:ok, updated_game}, %{state | game: updated_game}}
   end
 

@@ -11,15 +11,18 @@ defmodule SushiGoWeb.GameController do
 
   @spec join(Plug.Conn.t(), map) :: Plug.Conn.t()
   def join(conn, params) do
-    with {:ok, validated_params} <- Tarams.cast(params, @join_params_schema) do
-      game_path = ~p"/game/#{validated_params.invite}"
+    case Tarams.cast(params, @join_params_schema) do
+      {:ok, validated_params} ->
+        game_path = ~p"/game/#{validated_params.invite}"
 
-      conn
-      |> put_session(:invite, validated_params.invite)
-      |> put_session(:player, validated_params.player)
-      |> redirect(to: game_path)
-    else
-      _ -> conn |> redirect(to: ~p"/")
+        conn
+        |> put_session(:invite, validated_params.invite)
+        |> put_session(:player, validated_params.player)
+        |> redirect(to: game_path)
+
+      _ ->
+        conn
+        |> redirect(to: ~p"/")
     end
   end
 

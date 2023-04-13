@@ -192,10 +192,15 @@ defmodule SushiGo.Game do
       game.players
       |> Enum.map(fn %Player{} = player ->
         if player.id == player_id and Enum.member?(player.available_cards, card) do
+          cards = if player.used_chopsticks, do: 2, else: 1
+          new_stack = [card] ++ player.picked_cards
+          new_picked_cards = Enum.take(new_stack, cards)
+          new_available_cards = Enum.drop(new_stack, cards)
+
           %Player{
             player
-            | picked_cards: [card],
-              available_cards: (player.available_cards -- [card]) ++ player.picked_cards
+            | picked_cards: new_picked_cards,
+              available_cards: (player.available_cards -- [card]) ++ new_available_cards
           }
         else
           player
@@ -205,17 +210,17 @@ defmodule SushiGo.Game do
     %__MODULE__{game | players: updated_players}
   end
 
-  @spec swap_with_chopsticks(t(), String.t(), Cards.card()) :: t()
-  def swap_with_chopsticks(%__MODULE__{} = game, player_id, card) do
+  @spec use_chopsticks(t(), String.t()) :: t()
+  def use_chopsticks(%__MODULE__{} = game, player_id) do
     updated_players =
       game.players
       |> Enum.map(fn %Player{} = player ->
-        if player.id == player_id and Enum.member?(player.available_cards, card) and
-             Enum.member?(player.collected_cards, :chopsticks) do
+        if player.id == player_id and Enum.member?(player.collected_cards, :chopsticks) do
           %Player{
             player
-            | picked_cards: player.picked_cards ++ ([card] -- [:chopsticks]),
-              available_cards: (player.available_cards -- [card]) ++ [:chopsticks]
+            | collected_cards: player.collected_cards -- [:chopsticks],
+              available_cards: player.available_cards ++ [:chopsticks],
+              used_chopsticks: true
           }
         else
           player
@@ -230,8 +235,10 @@ defmodule SushiGo.Game do
     updated_players =
       game.players
       |> Enum.map(fn %Player{} = player ->
-        if player.id == player_id and not Enum.empty?(player.picked_cards) do
-          %Player{player | finished_picking: true}
+        expected_picked_cards = if player.used_chopsticks, do: 2, else: 1
+
+        if player.id == player_id and length(player.picked_cards) == expected_picked_cards do
+          %Player{player | finished_picking: true, used_chopsticks: false}
         else
           player
         end
