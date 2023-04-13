@@ -37,6 +37,12 @@ defmodule SushiGo.Game do
     {:ok, %__MODULE__{game | players: game.players ++ [player]}}
   end
 
+  @spec leave(t(), Player.t()) :: {:ok, t()}
+  def leave(%__MODULE__{} = game, %Player{} = player) do
+    # TODO: Delete games with < 1 player?
+    {:ok , %__MODULE__{game | players: game.players -- [player]}}
+  end
+
   @spec find_player(t(), String.t()) :: {:ok, Player.t()} | {:error, :player_not_found}
   def find_player(%__MODULE__{} = game, player_id) when is_binary(player_id) do
     game.players

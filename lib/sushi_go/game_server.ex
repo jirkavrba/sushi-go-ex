@@ -23,8 +23,15 @@ defmodule SushiGo.GameServer do
 
   @spec join(String.t(), Player.t()) :: :ok | {:error, :game_not_found | :game_started}
   def join(game_id, %Player{} = player) when is_binary(game_id) do
-    with {:ok, players} <- call_by_name(game_id, {:join, player}) do
-      broadcast!(game_id, :players_updated, players)
+    with {:ok, updated_game} <- call_by_name(game_id, {:join, player}) do
+      broadcast!(game_id, :game_updated, updated_game)
+    end
+  end
+
+  @spec leave(String.t(), Player.t()) :: :ok | {:error, :game_not_found | :player_not_found}
+  def leave(game_id, %Player{} = player) when is_binary(game_id) do
+    with {:ok, updated_game} <- call_by_name(game_id, {:leave, player}) do
+      broadcast!(game_id, :game_updated, updated_game)
     end
   end
 
@@ -48,11 +55,17 @@ defmodule SushiGo.GameServer do
   def handle_call({:join, player}, _from, state) do
     case Game.join(state.game, player) do
       {:ok, game} ->
-        {:reply, {:ok, game.players}, %{state | game: game}}
+        {:reply, {:ok, game}, %{state | game: game}}
 
       error ->
         {:reply, error, state}
     end
+  end
+
+  @impl GenServer
+  def handle_call({:leave, player}, _from, state) do
+    {:ok, game} = Game.leave(state.game, player)
+    {:reply, {:ok, game}, %{state | game: game}}
   end
 
   @impl GenServer

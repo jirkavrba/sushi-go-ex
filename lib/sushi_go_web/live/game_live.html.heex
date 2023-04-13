@@ -1,2 +1,17 @@
-GAME ID: <%= Jason.encode!(@game) %> <br/>
-<%!-- PLAYER_ID <%= @player_id %> --%>
+GAME id: <%= @game.code.game_id %>, invite: <strong><%= @game.code.game_code %></strong> <br />
+PLAYER_ID <%= @player.id %>
+
+<%= if @game.started do %>
+<% else %>
+  <div class="flex flex-row">
+    <%= for player <- @game.players do %>
+      <div class="m-4">
+        <%= player.username %>
+        <%= if (player.id == @player.id), do: "(That's you)", else: "" %>
+      </div>
+    <% end %>
+  </div>
+
+  <.button disabled={length(@game.players) < 2}>Start the game</.button>
+  <.button phx-click="leave">Leave</.button>
+<% end %>
