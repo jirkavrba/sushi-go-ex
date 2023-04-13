@@ -8,7 +8,9 @@
   <main class="flex flex-col justify-center flex-grow p-4 pb-0 mx-8 shadow-xl bg-white rounded-t-xl">
     <%= @inner_content %>
   </main>
-  <%!-- <footer class="flex flex-col items-center justify-center mx-16 bg-white text-xs uppercase tracking-wide font-bold text-neutral-400 py-1">
-    &copy; <%= DateTime.utc_now().year %> Jiří Vrba
-  </footer> --%>
+  <footer class="fixed left-0 bottom-0 -rotate-90 origin-top-left items-center justify-center text-white text-xs uppercase tracking-wide font-bold py-2">
+    &copy; <%= DateTime.utc_now().year %> 
+    <strong class="mx-3">Jiří Vrba</strong> 
+    <%!-- <span class="opacity-70">drawings by</span><strong class="ml-1">Alena Vrbová</strong>  --%>
+  </footer>
 </div>
