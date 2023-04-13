@@ -28,6 +28,20 @@ defmodule SushiGo.GameServer do
     end
   end
 
+  @spec find_game(String.t()) :: {:ok, Game.t()} | {:error, :game_not_found}
+  def find_game(invite) when is_binary(invite) do
+    invite
+    |> invite_to_game_id()
+    |> call_by_name(:find_game)
+  end
+
+  @spec find_player(String.t(), String.t()) :: {:ok, Player.t()} | {:error, :player_not_found}
+  def find_player(invite, player_id) when is_binary(invite) and is_binary(player_id) do
+    invite
+    |> invite_to_game_id()
+    |> call_by_name({:find_player, player_id})
+  end
+
   # GenServer methods
 
   @impl GenServer
@@ -41,6 +55,25 @@ defmodule SushiGo.GameServer do
     end
   end
 
+  @impl GenServer
+  def handle_call(:find_game, _from, state) do
+    {:reply, {:ok, state.game}, state}
+  end
+
+  @impl GenServer
+  def handle_call({:find_player, player_id}, _from, state) do
+    {:reply, Game.find_player(state.game, player_id), state}
+  end
+
+  # Helper methods
+
+  @spec invite_to_game_id(String.t()) :: String.t()
+  defp invite_to_game_id(invite) when is_binary(invite) do
+    invite
+    |> GameCode.new()
+    |> Map.get(:game_id)
+  end
+
   @type via_query :: {:via, Registry, {SushiGo.GameRegistry, String.t()}}
 
   @spec via_tuple(String.t()) :: via_query()
@@ -49,7 +82,7 @@ defmodule SushiGo.GameServer do
   end
 
   @spec find_game_pid(String.t()) :: pid() | nil
-  def find_game_pid(game_id) do
+  def find_game_pid(game_id) when is_binary(game_id) do
     game_id
     |> via_tuple()
     |> GenServer.whereis()

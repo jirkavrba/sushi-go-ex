@@ -1,9 +1,10 @@
 defmodule SushiGoWeb.LobbyLive do
+  use SushiGoWeb, :live_view
+
   alias SushiGo.Player
   alias SushiGo.GameSupervisor
   alias SushiGo.GameServer
   alias SushiGo.GameCode
-  use SushiGoWeb, :live_view
 
   def mount(params, _session, socket) do
     invite = params["invite"] || ""

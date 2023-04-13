@@ -30,10 +30,6 @@ defmodule SushiGoWeb.GameController do
     |> redirect(to: ~p"/")
   end
 
-  @index_params_schema %{
-    invite: [type: :string, required: true]
-  }
-
   def index(conn, params) do
     with player_id <- get_session(conn, :player), invite <- get_session(conn, :invite) do
       # Player doesn't have a session or is connected to another game

@@ -37,6 +37,16 @@ defmodule SushiGo.Game do
     {:ok, %__MODULE__{game | players: game.players ++ [player]}}
   end
 
+  @spec find_player(t(), String.t()) :: {:ok, Player.t()} | {:error, :player_not_found}
+  def find_player(%__MODULE__{} = game, player_id) when is_binary(player_id) do
+    game.players
+    |> Enum.find(fn %Player{id: id} -> id == player_id end)
+    |> then(fn
+      nil -> {:error, :player_not_found}
+      player -> {:ok, player}
+    end)
+  end
+
   @doc "Start a new game round together with dealing players new cards"
   @spec start_new_round(t()) :: t()
   def start_new_round(%__MODULE__{} = game) do
