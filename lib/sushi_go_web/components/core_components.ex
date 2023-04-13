@@ -34,7 +34,7 @@ defmodule SushiGoWeb.CoreComponents do
       type={@type}
       class={[
         "rounded-xl uppercase tracking-wide text-sm font-black",
-        "transition w-full py-4 disabled:opacity-50 disabled:cursor-not-allowed",
+        "transition w-full px-8 py-4 disabled:opacity-50 disabled:cursor-not-allowed",
         @colors,
         @class
       ]}
@@ -118,7 +118,7 @@ defmodule SushiGoWeb.CoreComponents do
         id={@id || @name}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-lg border-zinc-300 py-3 px-6",
+          "mt-2 block w-full rounded-lg border-2 border-zinc-300 py-3 px-6",
           "text-zinc-900 focus:outline-none focus:ring-4 sm:text-sm sm:leading-6",
           "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 phx-no-feedback:focus:ring-zinc-800/5",
           "border-zinc-300 focus:border-zinc-400 focus:ring-zinc-800/5",

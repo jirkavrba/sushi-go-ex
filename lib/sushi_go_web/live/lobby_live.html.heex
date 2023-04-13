@@ -1,4 +1,4 @@
-    <h1 class="text-7xl font-black text-center mb-20">Sushi Go!</h1>
+<h1 class="text-7xl font-black text-center mb-20">Sushi Go!</h1>
 <%= if (@player == "") do %>
   <section class="flex flex-col items-center justify-center ">
     <h1 class="text-xl font-black uppercase tracking wide bg-gradient-to-br from-red-500 to-amber-500 bg-clip-text text-transparent">
@@ -43,8 +43,8 @@
           <.input
             type="text"
             field={@invite_form[:invite]}
-            class="text-center text-xs uppercase font-bold"
-            placeholder="code"
+            class="text-center text-xs uppercase font-bold font-mono"
+            placeholder="•••"
             maxlength={3}
           />
           <.button disabled={!@valid_invite} colors="bg-white text-black shadow-xl">
@@ -55,7 +55,7 @@
     </div>
 
     <%= if @error != nil do %>
-        <div>
+        <div class="bg-red-100 text-red-800 font-black mt-10 p-4 rounded-xl text-center">
             <%= @error %>
         </div>
     <% end %>
