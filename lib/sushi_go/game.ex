@@ -90,7 +90,7 @@ defmodule SushiGo.Game do
         }
       end)
 
-    %__MODULE__{game | round: game.round + 1, players: updated_players}
+    %__MODULE__{game | started: true, round: game.round + 1, players: updated_players}
   end
 
   @spec finish_round(t()) :: t()

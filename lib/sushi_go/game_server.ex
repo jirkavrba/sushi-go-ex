@@ -35,6 +35,14 @@ defmodule SushiGo.GameServer do
     end
   end
 
+  @spec start(String.t(), Player.t()) :: :ok | {:error, :game_not_found | :game_started}
+  def start(game_id, %Player{} = player) when is_binary(game_id) do
+    with {:ok, updated_game} <- call_by_name(game_id, {:start, player}) do
+      broadcast!(game_id, :game_updated, updated_game)
+      Enum.each(updated_game.players, fn player -> broadcast!("player:#{player.id}", :player_updated, player) end)
+    end
+  end
+
   @spec find_game(String.t()) :: {:ok, Game.t()} | {:error, :game_not_found}
   def find_game(invite) when is_binary(invite) do
     invite
@@ -66,6 +74,13 @@ defmodule SushiGo.GameServer do
   def handle_call({:leave, player}, _from, state) do
     {:ok, game} = Game.leave(state.game, player)
     {:reply, {:ok, game}, %{state | game: game}}
+  end
+
+  @impl GenServer
+  def handle_call({:start, _player}, _from, state) do
+    # TODO: Log who started the game to the game chat
+    updated_game = Game.start_new_round(state.game)
+    {:reply, {:ok, updated_game}, %{state | game: updated_game}}
   end
 
   @impl GenServer
@@ -118,7 +133,7 @@ defmodule SushiGo.GameServer do
   end
 
   @spec broadcast!(String.t(), atom(), map()) :: :ok
-  defp broadcast!(game_id, event, payload) do
-    Phoenix.PubSub.broadcast!(SushiGo.PubSub, game_id, %{event: event, payload: payload})
+  defp broadcast!(channel_id, event, payload) do
+    Phoenix.PubSub.broadcast!(SushiGo.PubSub, channel_id, %{event: event, payload: payload})
   end
 end
