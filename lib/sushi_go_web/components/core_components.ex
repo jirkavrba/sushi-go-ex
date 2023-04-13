@@ -12,7 +12,6 @@ defmodule SushiGoWeb.CoreComponents do
 
   alias Phoenix.LiveView.JS
 
-
   @doc """
   Renders a button.
 
@@ -123,7 +122,7 @@ defmodule SushiGoWeb.CoreComponents do
           "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 phx-no-feedback:focus:ring-zinc-800/5",
           "border-zinc-300 focus:border-zinc-400 focus:ring-zinc-800/5",
           @errors != [] && "border-rose-400 focus:border-rose-400 focus:ring-rose-400/10",
-          @class,
+          @class
         ]}
         {@rest}
       />

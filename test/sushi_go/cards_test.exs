@@ -22,9 +22,10 @@ defmodule SushiGo.CardsTest do
     deck = Cards.create_game_deck(100)
 
     assert length(deck) == 98
+
     assert deck
-          |> Enum.filter(&(&1 == :pudding))
-          |> Enum.empty?()
+           |> Enum.filter(&(&1 == :pudding))
+           |> Enum.empty?()
   end
 
   test "scoring includes maki points" do
@@ -51,10 +52,21 @@ defmodule SushiGo.CardsTest do
 
   test "scoring nigiri" do
     # 3 * 1 + 2 + 2 = 7
-    assert Cards.score([:wasabi, :egg_nigiri, :salmon_nigiri, :sashimi, :tempura, :salmon_nigiri]) == 7
+    assert Cards.score([:wasabi, :egg_nigiri, :salmon_nigiri, :sashimi, :tempura, :salmon_nigiri]) ==
+             7
 
     # 1 + 3 * 3 + 3 * 2 + 2 = 18
-    assert Cards.score([:egg_nigiri, :tempura, :wasabi, :sashimi, :squid_nigiri, :pudding, :wasabi, :salmon_nigiri, :salmon_nigiri]) == 18
+    assert Cards.score([
+             :egg_nigiri,
+             :tempura,
+             :wasabi,
+             :sashimi,
+             :squid_nigiri,
+             :pudding,
+             :wasabi,
+             :salmon_nigiri,
+             :salmon_nigiri
+           ]) == 18
   end
 
   test "scoring dumplings" do

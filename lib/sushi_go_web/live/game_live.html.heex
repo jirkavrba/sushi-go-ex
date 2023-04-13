@@ -11,99 +11,121 @@
       </ul>
     </div>
   <% else %>
-    <div>
-      <div>
-        Round #<%= @game.round %>
-      </div>
+    <div class="text-2xl font-black mb-2">
+      Round #<%= @game.round %>
+    </div>
 
+    <div class="flex flex-col flex-grow gap-4 justify-start items-stretch">
       <%= for player <- @game.players do %>
-        <div class={if @player.id == player.id, do: "bg-red-500", else: "bg-neutral-100"}>
-          <%= player.username %> &bull; <%= player.accumulated_score %> points, <%= player.puddings %> puddings, <%= if player.finished_picking,
-            do: "finished picking",
-            else: "still picking..." %>
-
-          <div class="flex flex-row">
-            <%= for card <- player.collected_cards do %>
-              <div class="bg-red-100 p-4 m-4">
-                <%= if @player.id == player.id and card == :chopsticks do %>
-                  <%= card %>
-                  <.button phx-click="use-chopsticks">Use</.button>
-                <% else %>
-                  <%= card %>
-                <% end %>
+        <div class={"flex flex-row items-center p-4 gap-4 rounded-xl #{lane_class(player, @player.id == player.id)}"}>
+          <i class={"text-white text-3xl fa-solid mx-4 #{if player.finished_picking, do: "fa-square-check", else: "fa-hourglass-half animate-pulse"}"} />
+          <div class="flex flex-col flex-grow items-start text-white font-black">
+            <div class="flex flex-row items-center gap-4">
+              <div><%= player.username %></div>
+              <div class="opacity-50">&bull;</div>
+              <div class="flex flex-row items-center gap-2" title="Points">
+                <%= player.accumulated_score %> <i class="fa-solid fa-star"></i>
               </div>
-            <% end %>
-            <%= for card <- player.picked_cards do %>
-              <%= if @player.id == player.id do %>
-                <div class="bg-purple-100 p-4 m-4">
-                  <%= card %>
-                </div>
-              <% else %>
-                <div class="bg-amber-100 p-4 m-4">
-                  HIDDEN
-                </div>
+              <div class="opacity-50">&bull;</div>
+              <div class="flex flex-row items-center gap-2" title="Puddings">
+                <%= player.puddings %> <i class="fa-solid fa-bread-slice"></i>
+              </div>
+            </div>
+
+            <div class="flex flex-row items-center self-start h-20">
+              <%= for card <- player.collected_cards do %>
+                <%= if @player.id == player.id and card == :chopsticks do %>
+                  <div
+                    class="bg-gradient-to-br rounded-xl p-2 m-2 transform transition translate-y-0 shadow hover:-translate-y-2 hover:shadow-xl cursor-pointer"
+                    phx-click="use-chopsticks"
+                  >
+                    <%= card_image(card) %>
+                  </div>
+                <% else %>
+                  <div class="bg-white bg-opacity-10 rounded-xl p-2 m-2">
+                    <%= card_image(card) %>
+                  </div>
+                <% end %>
               <% end %>
-            <% end %>
+              <%= for card <- player.picked_cards do %>
+                <%= if @player.id == player.id do %>
+                  <div class="bg-white rounded-xl p-2 m-2">
+                    <%= card_image(card) %>
+                  </div>
+                <% else %>
+                  <div class="bg-amber-100 p-2 rounded-xl m-2">
+                    <%= card_image(:unknown) %>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
           </div>
         </div>
       <% end %>
+    </div>
 
-      <div class="flex flex-row">
-        <%= unless @player.finished_picking do %>
+    <%= unless @player.finished_picking do %>
+      <div class="flex flex-row gap-4 items-center justify-between bg-gray-800 p-2 rounded-t-3xl shadow-xl">
+        <div class="flex flex-row items-center">
           <%= for card <- Enum.sort(@player.available_cards) do %>
-            <div class="bg-blue-100 p-4 m-4" phx-click="pick-card" phx-value-card={card}>
-              <%= card %>
+            <div class="bg-white bg-opacity-10 rounded-xl p-4 m-2 transition transform hover:bg-opacity-50 hover:-translate-y-2 cursor-pointer" phx-click="pick-card" phx-value-card={card}>
+              <%= card_image(card) %>
             </div>
           <% end %>
-        <% end %>
-      </div>
+        </div>
 
-      <%= unless @player.finished_picking do %>
         <.button
+          colors="bg-gradient-to-br text-white disabled:from-gray-500 disabled:to-gray-500"
+          class="w-auto m-2 transition"
           disabled={length(@player.picked_cards) < if @player.used_chopsticks, do: 2, else: 1}
           phx-click="finish-picking"
         >
           Finish picking
         </.button>
-      <% end %>
-    </div>
+      </div>
+    <% end %>
   <% end %>
 <% else %>
-    <div class="text-neutral-500 uppercase font-bold tracking-wide text-center">To join this game use the code</div>
-    <h1 class="mx-auto text-8xl font-black text-center bg-gradient-to-br from-neutral-500 to-black bg-clip-text text-transparent"><%= @game.code.game_code %></h1>
-    <div class="flex flex-row flex-wrap w-full xl:w-2/3 mb-20 mt-10 items-center justify-center mx-auto gap-5 xl:gap-10">
-        <%= for player <- @game.players do %>
-            <div class="flex flex-col justify-center items-center my-4 bg-gray-100 px-4 py-2 xl:px-8 xl:py-4 rounded-xl gap-5">
-                <%= %>
-                <div class={"w-16 h-16 flex flex-row items-center justify-center rounded-full #{if player.id == @player.id, do: "bg-gradient-to-br from-cyan-500 to-green-500 text-white", else: "bg-gray-300  text-gray-500"}"}>
-                    <i class="text-4xl fa-solid fa-child"></i>
-                </div>
-                <div class="text-xl xl:text-2xl font-black">
-                    <%= player.username %>
-                </div>
-            </div>
-        <% end %>
-        <%= for _ <- Range.new(1, (5 - length(@game.players))) do %>
-            <div class="flex flex-col justify-center items-center my-4 bg-gray-100 px-4 py-2 xl:px-8 xl:py-4 rounded-xl gap-5">
-                <%= %>
-                <div class="w-16 h-16 flex flex-row items-center justify-center rounded-full border-dashed border-2">
-                    <i class="text-4xl fa-solid fa-child text-gray-200"></i>
-                </div>
-                <div class="text-xl xl:text-2xl font-black">
-                    &nbsp;
-                </div>
-            </div>
-        <% end %>
-    </div>
+  <div class="text-neutral-500 uppercase font-bold tracking-wide text-center">
+    To join this game use the code
+  </div>
+  <h1 class="mx-auto text-8xl font-black text-center bg-gradient-to-br from-neutral-500 to-black bg-clip-text text-transparent">
+    <%= @game.code.game_code %>
+  </h1>
+  <div class="flex flex-row flex-wrap w-full xl:w-2/3 mb-20 mt-10 items-center justify-center mx-auto gap-5 xl:gap-10">
+    <%= for player <- @game.players do %>
+      <div class="flex flex-col justify-center items-center my-4 bg-gray-100 px-4 py-2 xl:px-8 xl:py-4 rounded-xl gap-5">
+        <%=  %>
+        <div class={"w-16 h-16 flex flex-row items-center justify-center rounded-full #{if player.id == @player.id, do: "bg-gradient-to-br from-cyan-500 to-green-500 text-white", else: "bg-gray-300  text-gray-500"}"}>
+          <i class="text-4xl fa-solid fa-child"></i>
+        </div>
+        <div class="text-xl xl:text-2xl font-black">
+          <%= player.username %>
+        </div>
+      </div>
+    <% end %>
+    <%= for _ <- Range.new(1, (5 - length(@game.players))) do %>
+      <div class="flex flex-col justify-center items-center my-4 bg-gray-100 px-4 py-2 xl:px-8 xl:py-4 rounded-xl gap-5">
+        <div class="w-16 h-16 flex flex-row items-center justify-center rounded-full border-dashed border-2">
+          <i class="text-4xl fa-solid fa-child text-gray-200"></i>
+        </div>
+        <div class="text-xl xl:text-2xl font-black">
+          &nbsp;
+        </div>
+      </div>
+    <% end %>
+  </div>
 
-    <div class="flex flex-row justify-center items-center w-3/4 xl:w-1/2 mx-auto gap-10">
-        <.button disabled={length(@game.players) < 2} phx-click="start" colors="bg-green-500 text-white">
-            <i class="fa-solid fa-running text-xl mr-2"></i>
-            Start the game
-        </.button>
-        <.button phx-click="leave" colors="bg-red-500 text-white">
-            <i class="fa-solid fa-door-open text-xl mr-2"></i>
-            Leave
-        </.button>
-    </div>
+  <div class="flex flex-row justify-center items-center w-3/4 xl:w-1/2 mx-auto gap-10">
+    <.button
+      disabled={length(@game.players) < 2}
+      phx-click="start"
+      colors="bg-green-500 text-white"
+    >
+      <i class="fa-solid fa-running text-xl mr-2"></i> Start the game
+    </.button>
+    <.button phx-click="leave" colors="bg-red-500 text-white">
+      <i class="fa-solid fa-door-open text-xl mr-2"></i> Leave
+    </.button>
+  </div>
 <% end %>

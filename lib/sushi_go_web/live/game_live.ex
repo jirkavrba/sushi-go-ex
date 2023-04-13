@@ -1,6 +1,7 @@
 defmodule SushiGoWeb.GameLive do
   use SushiGoWeb, :live_view
 
+  alias SushiGo.Player
   alias SushiGo.Game
   alias SushiGo.GameServer
 
@@ -67,6 +68,30 @@ defmodule SushiGoWeb.GameLive do
   def handle_event("finish-picking", _params, socket) do
     GameServer.finish_picking(socket.assigns.game_id, socket.assigns.player_id)
     {:noreply, socket}
+  end
+
+  # View helpers
+  def lane_class(%Player{} = player, current_player?) when is_boolean(current_player?) do
+    cond do
+      player.finished_picking and current_player? ->
+        "bg-green-500 text-white"
+
+      player.finished_picking and not current_player? ->
+        "bg-gradient-to-r from-gray-500 to-green-500 text-white"
+
+      current_player? ->
+        "bg-blue-500"
+
+      true ->
+        "bg-gray-500 text-black"
+    end
+  end
+
+  def card_image(card) when is_atom(card) do
+    assigns = %{card: card}
+    ~H"""
+      <img class="w-12 h-12" src={"/images/#{@card}.png"}/>
+    """
   end
 
   defp extract_player(%Game{players: players}, player_id) when is_binary(player_id) do

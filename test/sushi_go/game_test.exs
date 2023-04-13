@@ -22,6 +22,7 @@ defmodule SushiGo.GameTest do
 
   test "adding players to a game that has been already started" do
     code = GameCode.new()
+
     game = %Game{
       code: code,
       round: 1,
@@ -29,7 +30,7 @@ defmodule SushiGo.GameTest do
       players: [
         Player.new("jirka"),
         Player.new("elinka")
-      ],
+      ]
     }
 
     assert length(game.players) == 2
