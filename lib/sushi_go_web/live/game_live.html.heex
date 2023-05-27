@@ -68,11 +68,11 @@
     </div>
 
     <%= unless @player.finished_picking do %>
-      <div class="flex flex-row gap-4 items-center justify-between bg-gray-800 p-2 rounded-t-3xl shadow-xl">
+      <div class="flex flex-row gap-4 items-center justify-between bg-gray-100 p-2 rounded-t-3xl shadow-xl">
         <div class="flex flex-row items-center">
           <%= for card <- Enum.sort(@player.available_cards) do %>
             <div
-              class="bg-white bg-opacity-10 rounded-xl p-4 m-2 transition transform hover:bg-opacity-50 hover:-translate-y-2 cursor-pointer"
+              class="bg-white rounded-xl p-4 m-2 transition transform shadow-none hover:shadow-lg hover:-translate-y-2 cursor-pointer"
               phx-click="pick-card"
               phx-value-card={card}
             >
